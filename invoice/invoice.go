@@ -1,4 +1,4 @@
-package app
+package invoice
 
 import (
 	"github.com/juelko/invoice/pkg/finvoice"
@@ -6,6 +6,6 @@ import (
 )
 
 type Invoice struct {
-	message.Meta
-	finvoice.Finvoice
+	Meta message.Meta
+	Data finvoice.Finvoice
 }

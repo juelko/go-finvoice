@@ -8,34 +8,24 @@ import (
 
 const TimeFormat = time.RFC3339Nano
 
-const (
-	StatusNew       = Status("New")
-	StatusDelivered = Status("Delivered")
-	StatusPaid      = Status("Paid")
-	StatusRejected  = Status("Rejected")
-	StatusDeleted   = Status("Deleted")
-)
-
-func NewMeta(t Type, sid SenderID, rid ReceiverID, dm DeliveryMethod) Meta {
-	ret := Meta{
+func NewMeta(t Type, sender CustomerID, receiver CustomerID, dm DeliveryMethod) Meta {
+	return Meta{
 		ID:        NewID(),
 		Type:      t,
-		Sender:    sid,
-		Receiver:  rid,
+		Sender:    sender,
+		Receiver:  receiver,
 		Delivery:  dm,
 		Status:    StatusNew,
 		CreatedAt: time.Now().Format(TimeFormat),
 		Version:   1,
 	}
-
-	return ret
 }
 
 type Meta struct {
 	ID        ID
 	Type      Type
-	Sender    SenderID
-	Receiver  ReceiverID
+	Sender    CustomerID
+	Receiver  CustomerID
 	Delivery  DeliveryMethod
 	Status    Status
 	Error     Error
@@ -58,12 +48,23 @@ func NewID() ID {
 
 type ID string
 
-type SenderID string
-
-type ReceiverID string
+type CustomerID string
 
 type Type string
 
 type DeliveryMethod string
 
+const (
+	DeliveryMethodREST  = DeliveryMethod("REST")
+	DeliveryMethodBatch = DeliveryMethod("BATCH")
+)
+
 type Status string
+
+const (
+	StatusNew       = Status("New")
+	StatusDelivered = Status("Delivered")
+	StatusPaid      = Status("Paid")
+	StatusRejected  = Status("Rejected")
+	StatusDeleted   = Status("Deleted")
+)
