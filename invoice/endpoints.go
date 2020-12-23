@@ -39,9 +39,9 @@ type GetRequest struct {
 }
 
 type GetResponse struct {
-	Meta  message.Meta      `xml:"Meta,omitempty"`
-	Data  finvoice.Finvoice `xml:"Data,omitempty"`
-	Error error             `xml:"Error,omitempty"`
+	Meta  *message.Meta      `xml:"Meta,omitempty"`
+	Data  *finvoice.Finvoice `xml:"Data,omitempty"`
+	Error error              `xml:"Error,omitempty"`
 }
 
 func MakeListEndpoint(is Service) endpoint.Endpoint {

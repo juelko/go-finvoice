@@ -6,6 +6,6 @@ import (
 )
 
 type Invoice struct {
-	Meta message.Meta
-	Data finvoice.Finvoice
+	Meta *message.Meta
+	Data *finvoice.Finvoice
 }
