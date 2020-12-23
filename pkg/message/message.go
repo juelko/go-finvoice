@@ -2,37 +2,42 @@ package message
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 const TimeFormat = time.RFC3339Nano
 
-func NewMeta(t Type, sender CustomerID, receiver CustomerID, dm DeliveryMethod) Meta {
-	return Meta{
-		ID:        NewID(),
-		Type:      t,
-		Sender:    sender,
-		Receiver:  receiver,
-		Delivery:  dm,
-		Status:    StatusNew,
-		CreatedAt: time.Now().Format(TimeFormat),
-		Version:   1,
-	}
-}
-
 type Meta struct {
 	ID        ID
-	Type      Type
-	Sender    CustomerID
-	Receiver  CustomerID
-	Delivery  DeliveryMethod
+	Type      MessageType
+	Sender    Party
+	Receiver  Party
 	Status    Status
 	Error     Error
 	CreatedAt string
 	UpdatedAt string
 	DeletedAt string
 	Version   uint
+}
+
+func (m *Meta) SetReceiver(receiver Party) {
+	m.Receiver = receiver
+}
+
+func (m *Meta) RejectWith(err Error) {
+	m.Receiver = Party{}
+	m.Status = StatusRejected
+	m.Error = err
+}
+
+func NewMeta(id ID, t MessageType, sender Party) *Meta {
+	return &Meta{
+		ID:        id,
+		Type:      t,
+		Sender:    sender,
+		Status:    StatusNew,
+		CreatedAt: time.Now().Format(TimeFormat),
+		Version:   1,
+	}
 }
 
 type Error struct {
@@ -42,17 +47,20 @@ type Error struct {
 	Location string
 }
 
-func NewID() ID {
-	return ID(uuid.New().String())
-}
-
 type ID string
 
-type CustomerID string
+type MessageType string
+type Party struct {
+	Channel        ChannelID
+	DeliveryMethod DeliveryMethod
+	Type           PartyType
+}
 
-type Type string
+type ChannelID string
 
 type DeliveryMethod string
+
+type PartyType string
 
 const (
 	DeliveryMethodREST  = DeliveryMethod("REST")
@@ -64,6 +72,7 @@ type Status string
 const (
 	StatusNew       = Status("New")
 	StatusDelivered = Status("Delivered")
+	StatusPending   = Status("Pending")
 	StatusPaid      = Status("Paid")
 	StatusRejected  = Status("Rejected")
 	StatusDeleted   = Status("Deleted")

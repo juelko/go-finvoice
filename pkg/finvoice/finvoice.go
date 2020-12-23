@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/xml"
 	"time"
+
+	"github.com/juelko/invoice/pkg/message"
 )
 
 type Amount struct {
@@ -419,6 +421,30 @@ type Finvoice struct {
 	OriginalInvoiceFormat                   string                                   `xml:"OriginalInvoiceFormat,omitempty"`
 	AttachmentMessageDetails                AttachmentMessageDetailsType             `xml:"AttachmentMessageDetails,omitempty"`
 	Version                                 Version                                  `xml:"Version,attr"`
+}
+
+func (f *Finvoice) MessageID() message.ID {
+	return message.ID(f.MessageTransmissionDetails.MessageDetails.MessageIdentifier)
+}
+
+func (f *Finvoice) MessageType() message.MessageType {
+	return message.MessageType("Finvoice")
+}
+
+func (f *Finvoice) From() AddressID {
+	return f.MessageTransmissionDetails.MessageSenderDetails.FromIdentifier.Address
+}
+
+func (f *Finvoice) FromIntermediator() IntermediatorID {
+	return f.MessageTransmissionDetails.MessageSenderDetails.FromIntermediator
+}
+
+func (f *Finvoice) To() AddressID {
+	return f.MessageTransmissionDetails.MessageReceiverDetails.ToIdentifier.Address
+}
+
+func (f *Finvoice) ToIntermediator() IntermediatorID {
+	return f.MessageTransmissionDetails.MessageReceiverDetails.ToIntermediator
 }
 
 // May be one of CCYYMMDD
